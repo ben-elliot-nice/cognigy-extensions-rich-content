@@ -15,7 +15,7 @@
     "extensions",
     "documentation"
   ],
-  "author": "Cognigy GmbH",
+  "author": "Ben Elliot",
   "license": "ISC",
   "dependencies": {
     "@cognigy/extension-tools": "^0.16.1",
