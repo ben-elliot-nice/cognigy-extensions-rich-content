@@ -1,7 +1,7 @@
 {
   "name": "cxone-rich-content",
   "version": "0.0.3",
-  "description": "An example of how you can write a Cognigy.AI 4.0.0 Extension containing Nodes.",
+  "description": "An extension for NICE CXone rich content functionality, providing custom nodes for easier dev/build of CXone integrated conversations.",
   "main": "build/module.js",
   "scripts": {
     "transpile": "tsc -p .",
@@ -11,9 +11,9 @@
   },
   "keywords": [
     "Cognigy.AI",
-    "example",
-    "extensions",
-    "documentation"
+    "CXone",
+    "NICE",
+    "rich-content"
   ],
   "author": "Ben Elliot",
   "license": "ISC",
