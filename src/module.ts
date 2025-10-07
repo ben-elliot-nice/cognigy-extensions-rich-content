@@ -10,5 +10,9 @@ export default createExtension({
 		sayTest
 	],
 
-	connections: []
+	connections: [],
+
+	options: {
+		label: "CXone Rich Content"
+	}
 });
