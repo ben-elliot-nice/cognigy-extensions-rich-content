@@ -2,6 +2,8 @@
 /**/token.json
 docs/**/build
 docs/**/node_modules
+docs/**/*.js
+docs/**/*.js.map
 extensions/*/build
 extensions/**/node_modules
 extensions/*/src/shared
@@ -17,3 +19,5 @@ coverage/
 *.tar.gz
 /**/.DS_Store
 .history
+node_modules/
+build/
