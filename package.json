@@ -1,11 +1,11 @@
 {
-  "name": "example",
+  "name": "cxone-rich-content",
   "version": "1.1.0",
   "description": "An example of how you can write a Cognigy.AI 4.0.0 Extension containing Nodes.",
   "main": "build/module.js",
   "scripts": {
     "transpile": "tsc -p .",
-    "zip": "tar cfz example.tar.gz build/* package.json package-lock.json README.md icon.png",
+    "zip": "tar cfz $npm_package_name-$npm_package_version.tar.gz build/* package.json package-lock.json README.md icon.png",
     "build": "npm run transpile && npm run lint && npm run zip",
     "lint": "tslint -c tslint.json src/**/*.ts"
   },
