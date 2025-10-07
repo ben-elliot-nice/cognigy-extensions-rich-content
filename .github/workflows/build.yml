@@ -24,14 +24,23 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Get version
+      - name: Get version and package name
         id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "name=$(node -p "require('./package.json').name")" >> $GITHUB_OUTPUT
 
-      - name: Upload build artifact
+      - name: Upload release tarball
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}
+          path: ${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}.tar.gz
+          retention-days: 30
+
+      - name: Upload build debug artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-debug-${{ steps.version.outputs.version }}
           path: |
             build/
             package.json
