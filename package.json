@@ -1,6 +1,6 @@
 {
   "name": "cxone-rich-content",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "An extension for NICE CXone rich content functionality, providing custom nodes for easier dev/build of CXone integrated conversations.",
   "main": "build/module.js",
   "scripts": {
