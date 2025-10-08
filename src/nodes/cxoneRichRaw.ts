@@ -1,25 +1,24 @@
 import { createNodeDescriptor, INodeFunctionBaseParams } from "@cognigy/extension-tools";
 
 /**
- * CXone JSON Dump Node
+ * CXone Rich Raw Node
  *
  * Allows power users to send raw CXone-compatible rich content JSON directly.
  * Automatically detects channel type and routes to appropriate output path.
  *
- * - CXone channel: Sends rich content via cxone output path
- * - Other channels: Routes to fallback output path with fallback text in context
+ * - CXone channel: Sends rich content via default output path
+ * - Other channels: Routes to "Not CXone" output path for transparent pass-through
  */
 
-export interface ICxoneJsonDumpParams extends INodeFunctionBaseParams {
+export interface ICxoneRichRawParams extends INodeFunctionBaseParams {
 	config: {
 		jsonSchema: any;
-		fallbackText: string;
 	};
 }
 
-export const cxoneJsonDump = createNodeDescriptor({
-	type: "cxoneJsonDump",
-	defaultLabel: "CXone JSON Dump",
+export const cxoneRichRaw = createNodeDescriptor({
+	type: "cxoneRichRaw",
+	defaultLabel: "CXone Rich Raw",
 
 	fields: [
 		{
@@ -35,23 +34,16 @@ export const cxoneJsonDump = createNodeDescriptor({
 					"mimeType": "text/plain"
 				}
 			}
-		},
-		{
-			key: "fallbackText",
-			label: "Fallback Text",
-			type: "cognigyText",
-			description: "Plain text sent to non-CXone channels",
-			defaultValue: "Message content not available on this channel"
 		}
 	],
 
 	dependencies: {
-		children: ["cxoneJsonDumpCxone", "cxoneJsonDumpFallback"]
+		children: ["cxoneRichRawDefault", "cxoneRichRawNotCxone"]
 	},
 
-	function: async ({ cognigy, config, childConfigs }: ICxoneJsonDumpParams) => {
+	function: async ({ cognigy, config, childConfigs }: ICxoneRichRawParams) => {
 		const { api, input } = cognigy;
-		const { jsonSchema, fallbackText } = config;
+		const { jsonSchema } = config;
 
 		// Detect if current channel is CXone
 		const isCXone = input.endpointType === "niceCXOne";
@@ -63,7 +55,7 @@ export const cxoneJsonDump = createNodeDescriptor({
 				"_cognigy": {
 					"_niceCXOne": {
 						"json": {
-							"text": fallbackText || "",
+							"text": "",
 							"uiComponent": {
 								"dfoMessage": {
 									"messageContent": jsonSchema
@@ -77,30 +69,30 @@ export const cxoneJsonDump = createNodeDescriptor({
 			// Send rich content to CXone
 			api.output(null, outputData);
 
-			// Route to CXone output path
-			const cxoneChild = childConfigs.find(child => child.type === "cxoneJsonDumpCxone");
-			if (!cxoneChild) {
-				throw new Error("Unable to find 'cxoneJsonDumpCxone' child. Seems it's not attached.");
+			// Route to default output path
+			const defaultChild = childConfigs.find(child => child.type === "cxoneRichRawDefault");
+			if (!defaultChild) {
+				throw new Error("Unable to find 'cxoneRichRawDefault' child. Seems it's not attached.");
 			}
-			api.setNextNode(cxoneChild.id);
+			api.setNextNode(defaultChild.id);
 
 		} else {
-			// Route to fallback output path (transparent pass-through)
-			const fallbackChild = childConfigs.find(child => child.type === "cxoneJsonDumpFallback");
-			if (!fallbackChild) {
-				throw new Error("Unable to find 'cxoneJsonDumpFallback' child. Seems it's not attached.");
+			// Route to "Not CXone" output path (transparent pass-through)
+			const notCxoneChild = childConfigs.find(child => child.type === "cxoneRichRawNotCxone");
+			if (!notCxoneChild) {
+				throw new Error("Unable to find 'cxoneRichRawNotCxone' child. Seems it's not attached.");
 			}
-			api.setNextNode(fallbackChild.id);
+			api.setNextNode(notCxoneChild.id);
 		}
 	}
 });
 
 /* Child node definitions for output paths */
 
-export const cxoneJsonDumpCxone = createNodeDescriptor({
-	type: "cxoneJsonDumpCxone",
-	parentType: "cxoneJsonDump",
-	defaultLabel: "CXone Channel",
+export const cxoneRichRawDefault = createNodeDescriptor({
+	type: "cxoneRichRawDefault",
+	parentType: "cxoneRichRaw",
+	defaultLabel: "Default",
 
 	appearance: {
 		color: '#2ecc71',
@@ -122,10 +114,10 @@ export const cxoneJsonDumpCxone = createNodeDescriptor({
 	}
 });
 
-export const cxoneJsonDumpFallback = createNodeDescriptor({
-	type: "cxoneJsonDumpFallback",
-	parentType: "cxoneJsonDump",
-	defaultLabel: "Other Channel",
+export const cxoneRichRawNotCxone = createNodeDescriptor({
+	type: "cxoneRichRawNotCxone",
+	parentType: "cxoneRichRaw",
+	defaultLabel: "Not CXone",
 
 	appearance: {
 		color: '#e74c3c',
